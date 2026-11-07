@@ -92,6 +92,12 @@ def main():
     try:
         due["media_id"] = post_reel(url, due["caption"])
         due["status"] = "posted"
+        # Posted OK: remove the video from the repo to keep storage small.
+        try:
+            os.remove(os.path.join("videos", os.path.basename(due["filename"])))
+            print("Deleted video from repo.")
+        except OSError as e:
+            print(f"Could not delete video: {e}", file=sys.stderr)
     except Exception as e:
         due["status"] = f"failed: {e}"[:200].replace("\n", " ")
         save_queue(rows)
