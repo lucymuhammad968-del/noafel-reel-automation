@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Connect TikTok - Noafel Auto content</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 16px;line-height:1.6;color:#111}
+input{width:100%;padding:8px;font-size:16px;box-sizing:border-box}
+button{margin-top:12px;padding:10px 18px;font-size:16px;background:#fe2c55;color:#fff;border:0;border-radius:6px;cursor:pointer}
+</style></head>
+<body>
+<h1>Connect TikTok</h1>
+<p><strong>Noafel Auto content</strong> publishes the owner's own scheduled videos to the owner's own TikTok account.
+Connecting lets the owner authorize the app once (scopes: <code>user.info.basic</code>, <code>video.publish</code>).</p>
+<label for="k">App client key (shown in the TikTok developer portal; it is public, not the secret)</label>
+<input id="k" placeholder="client key">
+<button id="go">Connect TikTok</button>
+<p><a href="terms.html">Terms of Service</a> &middot; <a href="privacy.html">Privacy Policy</a></p>
+<script>
+var redirect = location.origin + location.pathname.replace(/connect\.html$/, '') + 'callback.html';
+var q = new URLSearchParams(location.search).get('client_key');
+if (q) document.getElementById('k').value = q;
+document.getElementById('go').onclick = function () {
+  var key = document.getElementById('k').value.trim();
+  if (!key) { alert('Enter the client key first.'); return; }
+  var state = Math.random().toString(36).slice(2);
+  var url = 'https://www.tiktok.com/v2/auth/authorize/?client_key=' + encodeURIComponent(key) +
+    '&scope=' + encodeURIComponent('user.info.basic,video.publish') +
+    '&response_type=code&redirect_uri=' + encodeURIComponent(redirect) +
+    '&state=' + encodeURIComponent(state);
+  location.href = url;
+};
+</script>
+</body></html>
