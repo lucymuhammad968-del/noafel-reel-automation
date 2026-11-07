@@ -57,13 +57,19 @@ def check(resp):
 
 
 def get_access_token():
+    key = os.environ["TIKTOK_CLIENT_KEY"].strip()
+    secret = os.environ["TIKTOK_CLIENT_SECRET"].strip()
+    refresh = os.environ["TIKTOK_REFRESH_TOKEN"].strip()
+    # Safe diagnostics: lengths and the first 4 characters only.
+    print(f"[debug] key len={len(key)}, secret len={len(secret)}, "
+          f"refresh len={len(refresh)}, refresh prefix={refresh[:4]!r}")
     r = requests.post(
         f"{API}/v2/oauth/token/",
         data={
-            "client_key": os.environ["TIKTOK_CLIENT_KEY"],
-            "client_secret": os.environ["TIKTOK_CLIENT_SECRET"],
+            "client_key": key,
+            "client_secret": secret,
             "grant_type": "refresh_token",
-            "refresh_token": os.environ["TIKTOK_REFRESH_TOKEN"],
+            "refresh_token": refresh,
         },
         headers={"Content-Type": "application/x-www-form-urlencoded"},
         timeout=60,
@@ -72,7 +78,7 @@ def get_access_token():
     if "access_token" not in data:
         raise RuntimeError(f"Token refresh failed: {data.get('error_description') or data.get('error') or data}")
     new_refresh = data.get("refresh_token")
-    if new_refresh and new_refresh != os.environ["TIKTOK_REFRESH_TOKEN"]:
+    if new_refresh and new_refresh != refresh:
         print("NOTE: TikTok issued a new refresh token. The old one may stop working "
               "later; re-run the connect flow to update the TIKTOK_REFRESH_TOKEN secret.")
     return data["access_token"]
