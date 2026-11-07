@@ -17,7 +17,8 @@ import requests
 # Instagram-Login tokens use graph.instagram.com; Facebook-Login tokens use graph.facebook.com
 GRAPH = os.environ.get("IG_GRAPH_BASE") or "https://graph.facebook.com/v21.0"
 QUEUE = "queue.csv"
-FIELDS = ["filename", "caption", "post_at", "status", "media_id"]
+FIELDS = ["filename", "caption", "post_at", "status", "media_id",
+          "tiktok", "tiktok_status", "tiktok_id"]
 
 
 def load_queue():
@@ -92,12 +93,7 @@ def main():
     try:
         due["media_id"] = post_reel(url, due["caption"])
         due["status"] = "posted"
-        # Posted OK: remove the video from the repo to keep storage small.
-        try:
-            os.remove(os.path.join("videos", os.path.basename(due["filename"])))
-            print("Deleted video from repo.")
-        except OSError as e:
-            print(f"Could not delete video: {e}", file=sys.stderr)
+        # The video is deleted later by cleanup.py, once every platform is done.
     except Exception as e:
         due["status"] = f"failed: {e}"[:200].replace("\n", " ")
         save_queue(rows)
