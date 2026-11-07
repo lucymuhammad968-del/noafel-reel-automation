@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Authorization complete</title>
+<style>body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 16px;line-height:1.6;color:#111}code{word-break:break-all}</style></head>
+<body>
+<h1>Authorization complete</h1>
+<p>You can close this page. If the app owner asked for a code, it is shown below.</p>
+<p>Code: <code id="c">(none)</code></p>
+<script>
+var p = new URLSearchParams(location.search);
+document.getElementById('c').textContent = p.get('code') || p.get('error_description') || '(none)';
+</script>
+</body></html>
